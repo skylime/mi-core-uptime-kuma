@@ -1,0 +1,6 @@
+# dependency download
+git-base
+# software requirements
+nodejs
+# reverse proxy
+nginx

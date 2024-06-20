@@ -1,0 +1,8 @@
+name="core-uptime-kuma"
+organization="SkyLime"
+brand="Instance"
+version="23.4.0"
+description="Base core.io image"
+homepage="https://github.com/skylime/mi-core-uptime-kuma"
+users="root admin"
+base="9e45669f-c804-4aff-be1a-c5c2621244c7"

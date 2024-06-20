@@ -1,0 +1,48 @@
+#!/usr/bin/bash
+#
+# Put customizations to your image in this file.
+
+UPTIME_KUMA_VERSION='1.23.13'
+
+PATH=/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
+
+# Munin plugins
+MUNIN_PLUGINS="
+"
+
+# Exit if any commands fail
+set -o errexit
+
+echo "* Configuring image specific packages."
+mkdir -p /opt/kuma
+
+echo "* Download and extract uptime-kuma to /opt/kuma"
+curl -L "https://github.com/louislam/uptime-kuma/archive/${UPTIME_KUMA_VERSION}.tar.gz" | gtar xz -C /opt/kuma --strip-components=1
+
+echo "* Add kuma user"
+groupadd kuma
+useradd -d /opt/kuma -c "kuma user" -s /usr/bin/false -g kuma kuma
+
+echo "* Install missing dependencies via npm"
+pkgin -y install build-essential
+cd /opt/kuma \
+    && npm install --production \
+    && npm run download-dist
+pkgin -y remove build-essential
+pkgin -y autoremove
+
+echo "* Setup permissions for kuma folder"
+chown -R kuma:kuma /opt/kuma
+
+echo "* Create extra ssl folder for nginx"
+mkdir -p /opt/local/etc/nginx/ssl
+
+echo "* Activate munin plugins"
+/opt/core/bin/munin-node-plugins ${MUNIN_PLUGINS}
+
+echo "* Cleanup home/admin because of delegate dataset usage"
+rm -rf /home/admin/.[^.]*
+
+echo "* Cleaning up"
+rm -rf /root/*
+sm-prepare-image -y
