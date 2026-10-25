@@ -2,7 +2,7 @@
 #
 # Put customizations to your image in this file.
 
-UPTIME_KUMA_VERSION='1.23.13'
+UPTIME_KUMA_VERSION='2.0.2'
 
 PATH=/opt/local/gnu/bin:/opt/local/bin:/opt/local/sbin:/usr/bin:/usr/sbin
 
@@ -26,13 +26,16 @@ useradd -d /opt/kuma -c "kuma user" -s /usr/bin/false -g kuma kuma
 echo "* Install missing dependencies via npm"
 pkgin -y install build-essential
 cd /opt/kuma \
-    && npm install --production \
-    && npm run download-dist
+  && npm install --production \
+  && npm run download-dist
 pkgin -y remove build-essential
 pkgin -y autoremove
 
 echo "* Setup permissions for kuma folder"
 chown -R kuma:kuma /opt/kuma
+
+echo "* Install kuma cli"
+pip install -g https://github.com/drscream/uptime-kuma-cli2/archive/refs/heads/feature/api-v2.zip
 
 echo "* Create extra ssl folder for nginx"
 mkdir -p /opt/local/etc/nginx/ssl

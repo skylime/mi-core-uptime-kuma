@@ -4,3 +4,5 @@ git-base
 nodejs
 # reverse proxy
 nginx
+# Tooling
+py313-pip
